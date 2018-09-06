@@ -1,18 +1,26 @@
 <template>
   <van-row  style="overflow-x:hidden">
     <van-nav-bar class="navBarStyle" title="订单服务" left-arrow click-left="$backTo()"/>
-
-    <van-row style="width:80%;margin:auto;margin-top:40px">
+    <van-row style="margin-top:30px">
+      <van-col span="8">
+        <center><van-icon name="add-o" style="font-size:40px;padding-bottom:5px"/></center>
+        <center>新增客户</center>
+      </van-col>
+      <van-col span="8">
+        <center><van-icon name="add-o" style="font-size:40px;padding-bottom:5px"/></center>
+        <center>新增企业</center>
+      </van-col>
+      <van-col span="8">
+        <center><van-icon name="add-o" style="font-size:40px;padding-bottom:5px"/></center>
+        <center>我的业绩</center>
+      </van-col>
+    </van-row>
+    <van-row style="width:90%;margin:auto;margin-top:20px">
       <van-cell-group>
         <div @click="open_search_company">
           <van-field v-model="company" placeholder="选择客户公司" />
         </div>
       </van-cell-group>
-      <!-- <van-cell-group>
-        <div @click="open_search_type">
-          <van-field v-model="type" placeholder="选择客户状态" />
-        </div>
-      </van-cell-group> -->
       <van-cell-group style="margin-top:10px">
         <van-row :gutter="20">
           <van-col span="12">
@@ -47,9 +55,9 @@
         </div>
       </van-cell-group>
 
-      <van-button size="large" type="primary" @click="open_product" style="background-color:#CC3300;border:1px solid #c30">新增产品</van-button>
+      <van-button size="large" type="primary" @click="open_product" style="background-color:#CC3300;border:1px solid #c30">新增服务</van-button>
 
-      <van-cell-group style="margin-top:10px;margin-bottom:20px">
+      <van-cell-group style="margin-top:10px;padding-bottom:60px">
         <van-collapse v-model="activeNames" >
           <van-collapse-item title="有赞微商城" name="1">
             提供多样店铺模板，快速搭建网上商城
@@ -65,7 +73,7 @@
 
 
       <van-tabbar style="margin-top:30px;">
-        <van-button type="primary" bottom-action style="font-size:20px;border-radius:5px;background-color:#CC3300" :loading="submit_loading" @click="submit">提交订单</van-button>
+        <van-button type="primary" bottom-action style="font-size:20px;border-radius:5px;background-color:#CC3300" :loading="submit_loading" @click="submit" :disabled="isShowSubmit">提交订单</van-button>
       </van-tabbar>
     </van-row>
     <company-select></company-select>
@@ -74,7 +82,6 @@
     <area-select></area-select>
     <product-detail></product-detail>
     <product-list></product-list>
-    <!-- <customer-type-select></customer-type-select> -->
   </van-row>
 </template>
 
@@ -85,7 +92,6 @@ import payDirSelect from '../woa-components/paydirList'
 import areaSelect from '../woa-components/areaSelect'
 import productDetail from '../woa-components/productDetail'
 import productList from '../woa-components/productList';
-// import customerTypeSelect from '../woa-components/customerTypeSelect';
 
 export default {
   components:{
@@ -111,6 +117,15 @@ export default {
       hadPayMoney:"",
       areaName:"",
       area:""
+    }
+  },
+  computed:{
+    isShowSubmit(){
+      if(this.company){
+        return false
+      }else{
+        return true
+      }
     }
   },
   methods:{

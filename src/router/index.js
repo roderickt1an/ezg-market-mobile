@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import clientRecord from  '@/components/clientRecord';
+// import clientRecord from  '@/components/clientRecord';
 import Login from  '@/components/login/login';
 
 //  order

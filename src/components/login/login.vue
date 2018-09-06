@@ -1,8 +1,8 @@
 <template>
     <van-row style="overflow-x: hidden">
-      <van-notice-bar
+      <!-- <van-notice-bar
         text="如在使用过程遇到问题或者有需要改进的地方，请及时联系技术部！"
-      />
+      /> -->
         <van-row>
             <div style="height: 150px;margin-top: 7rem">
                 <center>
