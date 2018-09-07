@@ -18,19 +18,19 @@
     <van-row style="width:90%;margin:auto;margin-top:20px">
       <van-cell-group>
         <div @click="open_search_company">
-          <van-field v-model="company" placeholder="选择客户公司" />
+          <van-field v-model="company" placeholder="选择客户公司" readonly/>
         </div>
       </van-cell-group>
       <van-cell-group style="margin-top:10px">
         <van-row :gutter="20">
           <van-col span="12">
             <div @click="open_time">
-              <van-field v-model="payTime" placeholder="缴费时间" />
+              <van-field v-model="payTime" placeholder="缴费时间" readonly/>
             </div>
           </van-col>
           <van-col span="12">
             <div @click="open_paydir">
-              <van-field v-model="payDirName" placeholder="缴费方式" />
+              <van-field v-model="payDirName" placeholder="缴费方式" readonly/>
             </div>
           </van-col>
         </van-row>
@@ -39,7 +39,7 @@
         <van-row :gutter="20">
           <van-col span="12">
             <div>
-              <van-cell v-model="totalMoney" />
+              <van-field v-model="totalMoney" placeholder="订单总价" type="number" disabled/>
             </div>
           </van-col>
           <van-col span="12">
@@ -51,26 +51,24 @@
       </van-cell-group>
       <van-cell-group style="margin-top:10px;margin-bottom:20px">
         <div @click="open_area">
-          <van-field v-model="areaName" placeholder="选择地区" />
+          <van-field v-model="areaName" placeholder="选择地区" readonly/>
         </div>
       </van-cell-group>
 
       <van-button size="large" type="primary" @click="open_product" style="background-color:#CC3300;border:1px solid #c30">新增服务</van-button>
-
-      <van-cell-group style="margin-top:10px;padding-bottom:60px">
-        <van-collapse v-model="activeNames" >
-          <van-collapse-item title="有赞微商城" name="1">
-            提供多样店铺模板，快速搭建网上商城
-          </van-collapse-item>
-          <van-collapse-item title="有赞零售" name="2">
-            网店吸粉获客、会员分层营销、一机多种收款，告别经营低效和客户流失
-          </van-collapse-item>
-          <van-collapse-item title="有赞美业" name="3">
-            线上拓客，随时预约，贴心顺手的开单收银
-          </van-collapse-item>
-        </van-collapse>
-      </van-cell-group>
-
+      <div style="padding-bottom:60px">
+        <van-cell-group style="margin-top:10px;">
+          <van-cell v-for="(item, index) in productList" :title="item.product" is-link :key="index" @click="change_product_detail(item,index)">
+            <van-row>
+              <van-col span="6">x {{item.productnumber}}</van-col>
+              <van-col span="18">
+                <div v-html="item.propertys" style="font-size:8px">
+                </div>
+              </van-col>
+            </van-row>
+          </van-cell>
+        </van-cell-group>
+      </div>
 
       <van-tabbar style="margin-top:30px;">
         <van-button type="primary" bottom-action style="font-size:20px;border-radius:5px;background-color:#CC3300" :loading="submit_loading" @click="submit" :disabled="isShowSubmit">提交订单</van-button>
@@ -80,7 +78,7 @@
     <time-select></time-select>
     <pay-dir-select></pay-dir-select>
     <area-select></area-select>
-    <product-detail></product-detail>
+    <product-detail @del="delete_item" ></product-detail>
     <product-list></product-list>
   </van-row>
 </template>
@@ -90,8 +88,9 @@ import companySelect from '../woa-components/companyList'
 import timeSelect from '../woa-components/timeSelect';
 import payDirSelect from '../woa-components/paydirList'
 import areaSelect from '../woa-components/areaSelect'
-import productDetail from '../woa-components/productDetail'
+// import productDetail from '../woa-components/productDetail'
 import productList from '../woa-components/productList';
+import productDetail from '../woa-components/product_detail';
 
 export default {
   components:{
@@ -113,10 +112,12 @@ export default {
       payTime:"",
       payDirName:"",
       payDir:"",
-      totalMoney:"订单总价",
       hadPayMoney:"",
       areaName:"",
-      area:""
+      area:"",
+      productList:[],
+      GDSreport: "ybd",
+      isornotkp: "N"
     }
   },
   computed:{
@@ -126,6 +127,13 @@ export default {
       }else{
         return true
       }
+    },
+    totalMoney(){
+      let price = 0;
+      for(let i = 0; i<this.productList.length;i++){
+        price += parseInt(this.productList[i].paynumber)
+      }
+      return price
     }
   },
   methods:{
@@ -142,13 +150,51 @@ export default {
       this.$Bus.emit('OPEN_AREA', true)
     },
     open_product(){
-      this.$Bus.emit('OPEN_PRODUCT_LIST', true)
+      let _self = this
+      if(_self.area && _self.companyID){
+        this.$Bus.emit('OPEN_PRODUCT_LIST', _self.area)
+      }else{
+        _self.$toast.fail("请选择地区及公司名称！")
+      }
+
     },
     // open_search_type(){
     //   this.$Bus.emit('OPEN_TYPE',true)
     // },
     submit(){
+      let _self = this
+      let url = `/api/order/create`
+      _self.submit_loading = true
+      let config = {
+          GDSreport: _self.GDSreport,
+          companyId: _self.companyID,
+          isornotkp: _self.isornotkp,
+          orderPayNumber: _self.hadPayMoney,
+          orderitems: JSON.stringify(_self.productList),
+          payDir: _self.payDir,
+          payTime: _self.payTime
+      }
 
+      function success(res){
+        _self.submit_loading = false
+        _self.$toast.success(res.data.msg)
+      }
+
+      function fail(err){
+        _self.submit_loading = false
+        _self.$toast.error(err.data.msg)
+      }
+
+      this.$Post(url, config, success, fail)
+    },
+    change_product_detail(item, index){
+      this.$Bus.emit("OPEN_PRODUCT_DETAIL",[index, item])
+      console.log(item)
+      console.log(index)
+    },
+    delete_item(e){
+      // console.log(e)
+      this.productList.splice(e,1)
     }
   },
   created(){
@@ -157,6 +203,7 @@ export default {
     _self.$Bus.off('UPDATE_TIME')
     _self.$Bus.off('UPDATE_PAYDIR')
     _self.$Bus.off('UPDATE_AREA')
+    _self.$Bus.off('ADD_PRODUCT')
     _self.$Bus.on('UPDATA_COMPANY',(e) => {
       _self.companyID = e.id
       _self.company = e.companyname
@@ -169,10 +216,14 @@ export default {
       _self.payDir = e.typecode
     })
     _self.$Bus.on('UPDATE_AREA',(e)=>{
-      console.log(e)
+      // console.log(e)
       _self.areaName = e[0].text + '-' + e[1].text
       _self.area = e[1].code
-      console.log(_self.area)
+      // console.log(_self.area)
+    })
+    _self.$Bus.on('ADD_PRODUCT',(e)=>{
+      console.log(e)
+      _self.productList.push(e)
     })
   }
 }
@@ -185,6 +236,9 @@ export default {
 }
 .van-nav-bar .van-icon{
   color:white!important
+}
+.van-cell__value{
+  text-align:left
 }
 </style>
 

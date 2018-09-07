@@ -1,0 +1,107 @@
+<template>
+  <div>
+    <van-popup v-model="productDetailShow" style="width:100%;height:100%">
+      <van-nav-bar class="navBarStyle" title="产品详情" left-arrow @click-left="productDetailShow=false"/>
+      <div style="height:625px">
+        <van-field v-model="detail.product" label="产品名称" readonly/>
+        <van-field v-model="detail.oaprice" label="产品价格" readonly/>
+        <van-field v-model="detail.productnumber" label="产品数量"/>
+        <van-field v-model="detail.paynumber" label="销售价格" />
+        <van-field v-model="detail.givethenumber" label="赠送数量"/>
+        <div @click="open_depart">
+          <van-field v-model="detail.departname" label="服务部门" readonly />
+        </div>
+        <van-field v-model="detail.memo" label="备注" type="textarea" placeholder="备注" autosize/>
+
+      </div>
+      <van-row style="width:100%;position:absolute;bottom:0">
+        <van-col span="12">
+          <van-button size="danger" style="width:100%" @click="productDetailShow=false">修改</van-button>
+        </van-col>
+        <van-col span="12">
+          <van-button style="width:100%" @click="delete_item">删除</van-button>
+        </van-col>
+      </van-row>
+    </van-popup>
+    <depart-list></depart-list>
+  </div>
+</template>
+
+<script>
+import departList from '../woa-components/departSelect'
+
+export default {
+  components:{
+    departList
+  },
+  data(){
+    return{
+      productDetailShow: false,
+      index: "",
+      detail: {
+        product:"",
+        productid:"",
+        plusdeduct:"",
+        memo:"",
+        givethenumber:"",
+        iscycle:"",
+        servicedeparts:"",
+        unitprice:"",
+        oaprice:"",
+        departname:"",
+        baseprice:"",
+        areaid:"",
+        propertys:"",
+        productnumber:"",
+        departid:"",
+        paynumber:"",
+        skuid:""
+      }
+    }
+  },
+  computed:{
+    totalPrice:function(){
+      return this.detail.oaprice * this.detail.productnumber
+    }
+  },
+  watch:{
+    totalPrice:function(){
+      this.detail.paynumber = this.totalPrice
+    }
+  },
+  created(){
+    let _self = this
+    this.$Bus.off("OPEN_PRODUCT_DETAIL")
+    this.$Bus.on("OPEN_PRODUCT_DETAIL",(e)=>{
+      // console.log(e)
+      _self.productDetailShow = true
+      _self.index = e[0]
+      _self.detail = e[1]
+    })
+    this.$Bus.off("UPDATE_DEPART")
+    this.$Bus.on("UPDATE_DEPART",(e)=>{
+      _self.detail.departname = e.text
+      _self.detail.departid = e.type
+    })
+
+  },
+  methods:{
+    open_depart(){
+      let _self = this
+      this.$Bus.emit("OPEN_DEPART",_self.detail.servicedeparts)
+    },
+    delete_item(){
+      this.$emit("del",this.index)
+      this.productDetailShow = false
+    }
+  }
+}
+</script>
+
+<style>
+.navBarStyle{
+  color:white!important;
+  background-color: #CC3300!important;
+}
+</style>
+
