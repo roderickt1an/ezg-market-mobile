@@ -3,12 +3,12 @@
     <van-popup v-model="productListShow" style="width:100%;height:100%">
       <van-nav-bar class="navBarStyle" title="产品列表" left-arrow @click-left="productListShow=false"/>
       <van-search placeholder="请输入产品名称" v-model="searchProduct" @search="get_all_product" />
-      <div class="wrapper" style="height:580px;overflow-y:scroll;width:25%;float:left" ref="wrapper" >
+      <div class="productList" ref="wrapper" >
         <van-badge-group :active-key="activeKey" class="content" ref="product">
           <van-badge @click="onClick(item, index)" v-for="(item, index) in productList" :key="index" :title="item.product"/>
         </van-badge-group>
       </div>
-      <div style="height:480px;overflow-y:scroll;float:left;width:75%">
+      <div class="detailContent">
         <van-row v-for="(item,index) in productType" :key="index" style="margin-top:10px;margin-bottom:10px">
           <van-row style="margin-top:10px;padding-bottom:10px;border-bottom:1px solid #ccc;margin-bottom:10px">{{item.name}}</van-row>
           <van-radio-group v-model="radio[index]">
@@ -43,7 +43,9 @@ export default {
       radio:[],
       productPrice: 0,
       sku:"",
-      detail:""
+      detail:"",
+      productId: "",
+      companyId: ""
     }
   },
   watch:{
@@ -132,6 +134,7 @@ export default {
     //  获取该产品的所有sku
     get_product_sku(e){
       let _self = this
+      _self.productId = e
       let url = `api/product/getSKUListByProductId`
       let config = {
         params:{
@@ -179,10 +182,10 @@ export default {
           for(let i = 0; i< _self.producSku.length;i++){
             arr = _self.producSku[i].linkPropertys.split(",")
             let flag = _self.find_array(arr, total)
-            console.log(flag)
+            // console.log(flag)
             if(flag){
               _self.sku = _self.producSku[i].id
-              console.log(_self.sku)
+              // console.log(_self.sku)
               resolve()
             }
           }
@@ -232,8 +235,26 @@ export default {
       function success(res){
         _self.detail = res.data.data[0]
         // console.log(_self.detail)
-        _self.$Bus.emit("ADD_PRODUCT",_self.detail)
-        _self.productListShow = false
+        if(res.data.data[0].iscycle == "Y"){
+          let url2 = "api/order/cycle/service/record/budget/period"
+          let config2 = {
+            params: {
+              productId: _self.productId,
+              companyId: _self.companyId
+            }
+          }
+
+          function success2(re){
+            _self.detail.servicestartdate = re.data.data
+            _self.$Bus.emit("ADD_PRODUCT",_self.detail)
+            _self.productListShow = false
+          }
+
+          _self.$Get(url2, config2, success2)
+        }else{
+          _self.$Bus.emit("ADD_PRODUCT",_self.detail)
+          _self.productListShow = false
+        }
       }
 
       this.$Get(url, config, success)
@@ -244,7 +265,8 @@ export default {
     this.$Bus.off("OPEN_PRODUCT_LIST")
     this.$Bus.on("OPEN_PRODUCT_LIST",(e)=>{
       _self.productListShow = true
-      _self.area = e
+      _self.area = e[0]
+      _self.companyId = e[1]
       _self.sku = ""
       _self.radio = []
       _self.detail = ""
@@ -270,5 +292,16 @@ export default {
   background-color: #CC3300!important;
   color: white;
 } */
+.productList{
+  height:580px;
+  overflow-y:scroll;
+  width:25%;
+  float:left
+}
+.detailContent{
+  height:480px;
+  overflow-y:scroll;
+  float:left;
+  width:75%
+}
 </style>
-

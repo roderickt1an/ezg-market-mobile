@@ -1,14 +1,19 @@
 <template>
   <van-row  style="overflow-x:hidden">
-    <van-nav-bar class="navBarStyle" title="订单服务" left-arrow click-left="$backTo()"/>
+    <van-nav-bar class="navBarStyle" title="订单服务" left-arrow @click-left="$backTo()"/>
+    <van-search placeholder="请输入公司名称搜索" v-model="searchParams" @search="onSearchCustomer" />
     <van-row style="margin-top:30px">
       <van-col span="8">
-        <center><van-icon name="add-o" style="font-size:40px;padding-bottom:5px"/></center>
-        <center>新增客户</center>
+        <div @click="open_create_customer">
+          <center><van-icon name="add-o" style="font-size:40px;padding-bottom:5px"/></center>
+          <center>新增客户</center>
+        </div>
       </van-col>
       <van-col span="8">
-        <center><van-icon name="add-o" style="font-size:40px;padding-bottom:5px"/></center>
-        <center>新增企业</center>
+        <div @click="open_create_company">
+          <center><van-icon name="add-o" style="font-size:40px;padding-bottom:5px"/></center>
+          <center>新增企业</center>
+        </div>
       </van-col>
       <van-col span="8">
         <center><van-icon name="add-o" style="font-size:40px;padding-bottom:5px"/></center>
@@ -55,7 +60,8 @@
         </div>
       </van-cell-group>
 
-      <van-button size="large" type="primary" @click="open_product" style="background-color:#CC3300;border:1px solid #c30">新增服务</van-button>
+      <!-- <van-button size="large" type="primary" @click="open_product" style="background-color:#CC3300;border:1px solid #c30">新增服务</van-button> -->
+      <van-button size="large" type="default" @click="open_product"><span>+ </span>新增服务</van-button>
       <div style="padding-bottom:60px">
         <van-cell-group style="margin-top:10px;">
           <van-cell v-for="(item, index) in productList" :title="item.product" is-link :key="index" @click="change_product_detail(item,index)">
@@ -71,14 +77,14 @@
       </div>
 
       <van-tabbar style="margin-top:30px;">
-        <van-button type="primary" bottom-action style="font-size:20px;border-radius:5px;background-color:#CC3300" :loading="submit_loading" @click="submit" :disabled="isShowSubmit">提交订单</van-button>
+        <van-button type="primary" bottom-action style="font-size:20px;background-color:#CC3300" :loading="submit_loading" @click="submit" :disabled="isShowSubmit">提交订单</van-button>
       </van-tabbar>
     </van-row>
     <company-select></company-select>
     <time-select></time-select>
     <pay-dir-select></pay-dir-select>
     <area-select></area-select>
-    <product-detail @del="delete_item" ></product-detail>
+    <product-detail @del="delete_item" @change="change_item"></product-detail>
     <product-list></product-list>
   </van-row>
 </template>
@@ -104,6 +110,7 @@ export default {
   },
   data(){
     return{
+      searchParams:"",
       // type:"",
       submit_loading:false,
       activeNames:[],
@@ -152,7 +159,7 @@ export default {
     open_product(){
       let _self = this
       if(_self.area && _self.companyID){
-        this.$Bus.emit('OPEN_PRODUCT_LIST', _self.area)
+        this.$Bus.emit('OPEN_PRODUCT_LIST', [_self.area, _self.companyID])
       }else{
         _self.$toast.fail("请选择地区及公司名称！")
       }
@@ -172,12 +179,20 @@ export default {
           orderPayNumber: _self.hadPayMoney,
           orderitems: JSON.stringify(_self.productList),
           payDir: _self.payDir,
-          payTime: _self.payTime
+          payTime: _self.payTime,
       }
 
       function success(res){
         _self.submit_loading = false
         _self.$toast.success(res.data.msg)
+        _self.GDSreport = ""
+        _self.companyID = ""
+        _self.hadPayMoney = ""
+        _self.productList = []
+        _self.payDir = ""
+        _self.payTime = ""
+        _self.company = ""
+        _self.payDirName = ""
       }
 
       function fail(err){
@@ -189,12 +204,33 @@ export default {
     },
     change_product_detail(item, index){
       this.$Bus.emit("OPEN_PRODUCT_DETAIL",[index, item])
-      console.log(item)
-      console.log(index)
     },
     delete_item(e){
       // console.log(e)
       this.productList.splice(e,1)
+    },
+    change_item(e){
+      this.productList.splice(e[0],1,e[1])
+    },
+    //  跳转到新增客户
+    open_create_customer(){
+      this.$router.push({
+        name: "createCustomer"
+      })
+    },
+    //  跳转到新增企业
+    open_create_company(){
+      this.$router.push({
+        name: "createCompany"
+      })
+    },
+    //  搜索客户
+    onSearchCustomer(){
+      let _self = this
+      localStorage.setItem("SEARCH_PARAMS", _self.searchParams)
+      this.$router.push({
+        name: "customerList"
+      })
     }
   },
   created(){
@@ -222,7 +258,7 @@ export default {
       // console.log(_self.area)
     })
     _self.$Bus.on('ADD_PRODUCT',(e)=>{
-      console.log(e)
+      // console.log(e)
       _self.productList.push(e)
     })
   }

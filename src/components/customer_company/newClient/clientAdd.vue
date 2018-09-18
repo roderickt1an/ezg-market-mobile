@@ -1,7 +1,7 @@
 <template>
   <van-row style="overflow-x: hidden">
-    <van-nav-bar title="录入客户信息" style="background-color:#CC3300;color:white" />
-    <van-row>
+    <van-nav-bar title="录入客户信息" style="background-color:#CC3300;color:white" left-arrow @click-left="$backTo()" />
+    <van-row style="magrin-top:30px">
       <div style="width:80%;margin:auto">
         <van-cell-group>
           <van-field v-model="username" label="姓名" placeholder="请输入姓名" />
@@ -196,6 +196,13 @@ export default {
           _self.usertype = "";
           _self.$toast.success("添加成功！");
           _self.saveloading = false;
+          console.log(res.data.data.name, res.data.data.id)
+          localStorage.setItem("new_customer_id", res.data.data.id)
+          localStorage.setItem("new_customer_name", res.data.data.name)
+          localStorage.setItem("new_customer_tel",res.data.data.tel)
+          _self.$router.push({
+            name: "createCompany"
+          })
         }
         function fail(res) {
           _self.$toast.fail("添加失败！");

@@ -1,0 +1,42 @@
+<template>
+  <van-popup v-model="TELDetailShow" style="width:100%;height:100%">
+    <van-nav-bar class="navBarStyle" :title="detail.NAME" left-arrow @click-left="TELDetailShow=false"/>
+    <div style="height:625px">
+      <van-field v-model="detail.TEL" label="电话" :input-align="right"/>
+      <van-field v-model="detail.fixedPhone" label="固话" :input-align="right"/>
+      <van-field v-model="detail.qq" label="QQ" :input-align="right"/>
+      <van-field v-model="detail.weixin" label="微信" :input-align="right"/>
+      <van-field v-model="detail.email" label="邮箱" :input-align="right"/>
+      <!-- <div @click="open_depart">
+        <van-field v-model="detail.departname" label="地址" readonly />
+      </div> -->
+    </div>
+  </van-popup>
+</template>
+
+<script>
+export default {
+  data(){
+    return{
+      detail:{
+        NAME: "",
+        TEL: "",
+        fixedPhone: "",
+        qq: "",
+        weixin: "",
+        email: ""
+      },
+      TELDetailShow: false,
+      right:"right"
+    }
+  },
+  created(){
+    let _self = this
+    this.$Bus.off("OPEN_TEL")
+    this.$Bus.on("OPEN_TEL",(e)=>{
+      _self.detail = e
+      _self.TELDetailShow = true
+    })
+  }
+}
+</script>

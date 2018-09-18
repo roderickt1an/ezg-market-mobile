@@ -113,7 +113,7 @@ export default {
         let userrole = localStorage.getItem("Main_Role");
         _self.$toast.success("登陆成功！")
         _self.$router.push({
-          name: "CreateOrderIndex",
+          name: "index",
           // params: {
           //   id: e
           // }

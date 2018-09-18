@@ -10,10 +10,10 @@ import axios from 'axios'
 import VueBus from './common/vue-bus'
 import { Toast } from 'vant';
 
-import { Button, Table, Card } from 'iview';
-Vue.component('Button', Button);
-Vue.component('Table', Table);
-Vue.component('Card', Card);
+// import { Button, Table, Card } from 'iview';
+// Vue.component('Button', Button);
+// Vue.component('Table', Table);
+// Vue.component('Card', Card);
 
 
 Vue.use(VueBus);
@@ -21,7 +21,7 @@ Vue.use(Vant);
 Vue.use(Lazyload);
 
 Vue.prototype.$http = axios;
-//  this.$http.get()
+
 Vue.prototype.$Get = function (url, config, success) {
   let _self = this
   _self.$http.get(url, config).then(function (res) {
@@ -60,7 +60,7 @@ Vue.prototype.$Post = function (url, config, success, fail) {
 }
 
 
-Vue.prototype.$backTo = function () {
+Vue.prototype.$backTo = function(){
   this.$router.go(-1)
 }
 // this.$http.getDataCenter()

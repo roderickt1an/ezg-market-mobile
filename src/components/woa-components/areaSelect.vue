@@ -3,7 +3,7 @@
     <van-popup v-model="areaShow" position="bottom">
       <van-picker
         show-toolbar
-        title="缴费渠道"
+        title="地区选择"
         :columns="columns"
         @cancel="cancel_paydir"
         @confirm="confirm_paydir"

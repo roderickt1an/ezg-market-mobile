@@ -5,9 +5,10 @@
       <div style="height:625px">
         <van-field v-model="detail.product" label="产品名称" readonly/>
         <van-field v-model="detail.oaprice" label="产品价格" readonly/>
-        <van-field v-model="detail.productnumber" label="产品数量"/>
-        <van-field v-model="detail.paynumber" label="销售价格" />
-        <van-field v-model="detail.givethenumber" label="赠送数量"/>
+        <van-field v-model="detail.productnumber" label="产品数量" type="number"/>
+        <van-field v-model="detail.paynumber" label="销售价格" type="number"/>
+        <van-field v-model="detail.givethenumber" label="赠送数量" type="number"/>
+        <van-field v-model="detail.servicestartdate" label="服务开始税期" v-if="detail.iscycle"/>
         <div @click="open_depart">
           <van-field v-model="detail.departname" label="服务部门" readonly />
         </div>
@@ -16,7 +17,7 @@
       </div>
       <van-row style="width:100%;position:absolute;bottom:0">
         <van-col span="12">
-          <van-button size="danger" style="width:100%" @click="productDetailShow=false">修改</van-button>
+          <van-button size="danger" style="width:100%" @click="change">修改</van-button>
         </van-col>
         <van-col span="12">
           <van-button style="width:100%" @click="delete_item">删除</van-button>
@@ -62,10 +63,18 @@ export default {
   computed:{
     totalPrice:function(){
       return this.detail.oaprice * this.detail.productnumber
+    },
+    productnumber:function(){
+      return this.detail.productnumber
     }
   },
+  //  因为会自动计算产品价格，所以每次进入产品价格都会变化，比较尴尬
   watch:{
-    totalPrice:function(){
+    // totalPrice:function(){
+    // productnumber:function(newValue, oldValue){
+    //   this.detail.paynumber = this.totalPrice
+    // }
+    "detail.productnumber":function(){
       this.detail.paynumber = this.totalPrice
     }
   },
@@ -92,6 +101,10 @@ export default {
     },
     delete_item(){
       this.$emit("del",this.index)
+      this.productDetailShow = false
+    },
+    change(){
+      // this.$emit("change",[this.index, this.detail])
       this.productDetailShow = false
     }
   }

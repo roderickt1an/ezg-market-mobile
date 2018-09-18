@@ -1,9 +1,8 @@
 <template>
   <van-row style="overflow-x: hidden">
-    <van-notice-bar text="如在使用过程遇到问题或者有需要改进的地方，请及时联系技术部！" />
-    <van-nav-bar title="新增企业信息" style="background-color:#CC3300;color:white" />
-    <van-row>
-      <div style="width:80%;margin:auto">
+    <van-nav-bar title="新增企业信息" style="background-color:#CC3300;color:white" left-arrow @click-left="$backTo()" />
+    <van-row style="magrin-top:30px">
+      <div style="width:80%;margin:auto;">
         <van-cell-group>
           <van-cell title="归属客户" v-model="belongClient" @click="openClientList"/>
           <van-cell title="客户电话" v-model="clientTel" @click="openClientList"/>
@@ -12,7 +11,7 @@
           <van-field v-model="legalperson" label="法人" placeholder="请输入法人名字" />
           <van-cell title="重要等级" is-link v-model="levelvalue" @click="openLevel()" />
           <van-cell title="企业来源" is-link v-model="companysrc" @click="openSrc()" />
-          <van-cell title="交易状态" is-link v-model="trading" @click="openTrading()" />
+          <!-- <van-cell title="交易状态" is-link v-model="trading" @click="openTrading()" /> -->
           <van-cell title="企业纳税类型" is-link v-model="taxtype" @click="openTax()" />
         </van-cell-group>
       </div>
@@ -30,7 +29,7 @@
   </van-row>
 </template>
 <script>
-import CustomerList from "../records/customerList";
+import CustomerList from "../common/customerList";
 import RegAddress from "../common/regAddress";
 import ImportLevel from "../common/importLevel";
 import CompanySrc from "../common/companySrc";
@@ -118,6 +117,14 @@ export default {
       _self.taxtype = e.text;
       _self.taxcode = e.value;
     });
+    if(localStorage.getItem("new_customer_id")){
+      _self.belongClient = localStorage.getItem("new_customer_name")
+      _self.clientid = localStorage.getItem("new_customer_id")
+      _self.TEL = localStorage.getItem("new_customer_tel")
+      localStorage.setItem("new_customer_name", "")
+      localStorage.setItem("new_customer_id", "")
+      localStorage.setItem("new_customer_tel","")
+    }
   },
   methods: {
     openClientList() {
@@ -143,7 +150,6 @@ export default {
           }
         };
         function doSuccess(response) {
-          console.log(response.data);
           if (response.data.data != null) {
             _self.$toast("抱歉，公司名重复");
             _self.nameflag = false;
@@ -316,6 +322,11 @@ export default {
       }
       this.$GetDataCenter(params, finish);
     }
-  }
+  },
+  // beforeRouteLeave (to, from, next) {
+  //   localStorage.setItem("new_customer_name", "")
+  //   localStorage.setItem("new_customer_id", "")
+  //   next()
+  // }
 };
 </script>

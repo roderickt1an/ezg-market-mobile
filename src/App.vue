@@ -11,7 +11,7 @@ export default {
   name: 'App',
   created(){
     //  开启移动端console
-    // let vConsole = new VConsole()
+    let vConsole = new VConsole()
   }
 }
 </script>
@@ -24,5 +24,12 @@ export default {
   /* text-align: center; */
   color: #2c3e50;
   /* margin-top: 60px; */
+}
+.van-nav-bar .van-icon{
+  color:white!important
+}
+.navBarStyle{
+  color:white!important;
+  background-color: #CC3300!important;
 }
 </style>
