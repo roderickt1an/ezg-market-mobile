@@ -2,7 +2,7 @@
   <van-row style="overflow-x:hidden;">
     <van-nav-bar class="navBarStyle" title="客户查询" left-arrow @click-left="$backTo()"/>
     <van-search placeholder="请输入公司名称搜索" v-model="searchParams" @search="search" />
-    <van-row style="margin-top:5px;height:500px">
+    <van-row style="margin-top:5px;height:83vh" >
       <van-list
         v-model="loading"
         :finished="finished"

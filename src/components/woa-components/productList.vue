@@ -9,19 +9,20 @@
         </van-badge-group>
       </div>
       <div class="detailContent">
-        <van-row v-for="(item,index) in productType" :key="index" style="margin-top:10px;margin-bottom:10px">
-          <van-row style="margin-top:10px;padding-bottom:10px;border-bottom:1px solid #ccc;margin-bottom:10px">{{item.name}}</van-row>
+        <van-row v-for="(item,index) in productType" :key="index" class="content_container">
+          <van-row class="content_name">{{item.name}}</van-row>
           <van-radio-group v-model="radio[index]">
-            <van-col span="12" v-for="(type, index) in item.children" :key="index" style="padding:5px;height:40px">
+            <van-col span="12" v-for="(type, index) in item.children" :key="index" class="content_radio">
               <van-radio :name="type.pvId" :key="index">{{type.propertyValue}}</van-radio>
             </van-col>
           </van-radio-group>
         </van-row>
-        <van-row style="position:absolute;bottom:0;width:77.5%;left:22.5%">
+      </div>
+        <van-row class="product_bottom">
           <center><h3>产品价格：{{productPrice}} 元</h3></center>
           <van-button size="danger" @click="get_detail_by_skuid" :disabled="isAddProduct" style="width:100%">添加</van-button>
         </van-row>
-      </div>
+
     </van-popup>
   </div>
 </template>
@@ -293,15 +294,44 @@ export default {
   color: white;
 } */
 .productList{
-  height:580px;
+  height:86.5vh;
   overflow-y:scroll;
   width:25%;
   float:left
 }
 .detailContent{
-  height:480px;
+  height:70vh;
   overflow-y:scroll;
   float:left;
-  width:75%
+  width:75%;
+  margin-bottom:30px
+}
+.content_container{
+  margin-top:20px;
+  margin-bottom:20px
+}
+.content_name{
+  margin-top:10px;
+  padding-bottom:10px;
+  border-bottom:2px solid #ccc;
+  margin-bottom:10px
+}
+.content_radio{
+  padding:10px;
+  height:40px
+}
+.content_container .van-radio__label{
+  width:75px;
+}
+.product_bottom{
+  position: fixed;
+  left:23vw;
+  bottom:0;
+  width:76.5vw;
+
+}
+.product_bottom h3{
+  margin: 0;
+  margin-bottom:0.2em;
 }
 </style>

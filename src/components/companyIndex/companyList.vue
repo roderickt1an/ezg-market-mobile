@@ -1,5 +1,5 @@
 <template>
-  <van-row style="width:100%;height:100%">
+  <van-row style="width:100vw;height:100vh">
     <van-nav-bar class="navBarStyle" title="企业信息" left-arrow @click-left="$backTo()"/>
     <van-row style="margin-top:15px">
       <van-list

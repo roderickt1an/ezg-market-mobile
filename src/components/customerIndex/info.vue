@@ -1,7 +1,9 @@
 <template>
-  <van-popup v-model="TELDetailShow" style="width:100%;height:100%">
-    <van-nav-bar class="navBarStyle" :title="detail.NAME" left-arrow @click-left="TELDetailShow=false"/>
-    <div style="height:625px">
+  <van-popup v-model="TELDetailShow" style="width:100vw;height:100vh">
+    <van-nav-bar class="navBarStyle" :title="detail.NAME" left-arrow @click-left="TELDetailShow=false">
+      <div slot="left"><van-icon name="close" /></div>
+    </van-nav-bar>
+    <div>
       <van-field v-model="detail.TEL" label="电话" :input-align="right"/>
       <van-field v-model="detail.fixedPhone" label="固话" :input-align="right"/>
       <van-field v-model="detail.qq" label="QQ" :input-align="right"/>

@@ -1,10 +1,10 @@
 <template>
-  <van-row style="width:100%;height:100%">
+  <van-row style="width:100vw;height:100wh">
     <van-nav-bar class="navBarStyle" title="客户详情" left-arrow @click-left="$backTo()"/>
-    <van-row><h2 style="margin-left:20px">{{detail.NAME}}</h2></van-row>
-    <div style="height:625px;width:95%;margin:auto">
+    <van-row><h2 style="margin-left:5vw">{{detail.NAME}}</h2></van-row>
+    <div style="height:80vh;width:97vw;margin:auto">
       <div @click="open_tel">
-        <van-field v-model="detail.product" label="联系方式"/>
+        <van-field v-model="detail.product" label="联系方式" disabled/>
       </div>
       <van-row style="margin-top:10px"></van-row>
       <van-field v-model="detail.customerType" label="客户状态" readonly/>

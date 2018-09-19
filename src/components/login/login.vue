@@ -4,12 +4,12 @@
         text="如在使用过程遇到问题或者有需要改进的地方，请及时联系技术部！"
       /> -->
         <van-row>
-            <div style="height: 150px;margin-top: 7rem">
+            <div style="height: 25vh;margin-top: 7rem">
                 <center>
-                    <img style="height: 80px" src="./logo.png"/>
+                    <img style="height: 14vh" src="./logo.png"/>
                 </center>
             </div>
-            <div style="width:80%;margin:auto">
+            <div style="width:80vw;margin:auto">
                 <van-cell-group>
                         <van-field
                             v-model="username"
@@ -24,7 +24,7 @@
                         />
                 </van-cell-group>
             </div>
-            <van-row style="width:80%;margin:auto;margin-top:60px">
+            <van-row style="width:80%;margin:auto;margin-top:6vh">
                 <van-button size="large" type="primary" @click="before_login" :loading="loading">登 陆</van-button>
             </van-row>
         </van-row>
