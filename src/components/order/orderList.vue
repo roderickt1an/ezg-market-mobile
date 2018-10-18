@@ -51,7 +51,7 @@ export default {
   name:'companyList',
   data(){
     return{
-      data:[],
+      data: [],
       loading: false,
       finished: false
     }
